@@ -13,6 +13,7 @@ from sqlmesh.core.config.connection import (
     GCPPostgresConnectionConfig as GCPPostgresConnectionConfig,
     MotherDuckConnectionConfig as MotherDuckConnectionConfig,
     MSSQLConnectionConfig as MSSQLConnectionConfig,
+    FabricConnectionConfig as FabricConnectionConfig,
     MySQLConnectionConfig as MySQLConnectionConfig,
     PostgresConnectionConfig as PostgresConnectionConfig,
     RedshiftConnectionConfig as RedshiftConnectionConfig,
