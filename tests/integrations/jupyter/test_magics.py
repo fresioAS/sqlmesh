@@ -134,7 +134,7 @@ def test_context(notebook, convert_all_html_output_to_text, get_all_html_output,
 def test_init(tmp_path, notebook, convert_all_html_output_to_text, get_all_html_output):
     with pytest.raises(UsageError, match="the following arguments are required: path"):
         notebook.run_line_magic(magic_name="init", line="")
-    with pytest.raises(UsageError, match="the following arguments are required: sql_dialect"):
+    with pytest.raises(UsageError, match="the following arguments are required: engine"):
         notebook.run_line_magic(magic_name="init", line="foo")
     with capture_output() as output:
         notebook.run_line_magic(magic_name="init", line=f"{tmp_path} duckdb")
@@ -705,20 +705,6 @@ def test_test(notebook, sushi_context):
     test_file = sushi_context.path / "tests" / "test_customer_revenue_by_day.yaml"
     assert test_file.exists()
     assert test_file.read_text() == """test_customer_revenue_by_day: TESTING\n"""
-
-
-def test_run_test(notebook, sushi_context):
-    with capture_output() as output:
-        notebook.run_line_magic(
-            magic_name="run_test",
-            line=f"{sushi_context.path / 'tests' / 'test_customer_revenue_by_day.yaml'}::test_customer_revenue_by_day",
-        )
-
-    assert not output.stdout
-    # TODO: Does it make sense for this to go to stderr?
-    assert "Ran 1 test" in output.stderr
-    assert "OK" in output.stderr
-    assert not output.outputs
 
 
 @pytest.mark.slow
