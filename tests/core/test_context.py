@@ -315,6 +315,34 @@ def test_render_only_creates_snapshots_for_upstream_models(sushi_context: Contex
     assert requested_names == upstream_fqns
 
 
+@pytest.mark.slow
+def test_load_only_hydrates_remote_snapshots_missing_locally(sushi_context: Context) -> None:
+    prod = sushi_context.state_reader.get_environment("prod")
+    assert prod is not None
+
+    local_node_names = {*sushi_context.models, *sushi_context.standalone_audits}
+    expected_remote_names = {
+        snapshot_info.name
+        for snapshot_info in prod.snapshots
+        if snapshot_info.name not in local_node_names
+    }
+    assert len(expected_remote_names) < len(prod.snapshots)
+
+    with patch.object(
+        sushi_context.state_reader,
+        "get_snapshots",
+        wraps=sushi_context.state_reader.get_snapshots,
+    ) as get_snapshots_mock:
+        sushi_context.load(update_schemas=False)
+
+    load_snapshot_names = {
+        snapshot_info.name
+        for call_args in get_snapshots_mock.call_args_list
+        for snapshot_info in call_args.args[0]
+    }
+    assert load_snapshot_names == expected_remote_names
+
+
 def test_render_only_loads_upstream_model_files(tmp_path: pathlib.Path) -> None:
     create_temp_file(
         tmp_path,
