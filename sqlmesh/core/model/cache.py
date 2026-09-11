@@ -121,9 +121,7 @@ class OptimizedQueryCache:
         return False
 
     @staticmethod
-    def with_optimized_query_entry(
-        model: Model, cache_entry: OptimizedQueryCacheEntry
-    ) -> None:
+    def with_optimized_query_entry(model: Model, cache_entry: OptimizedQueryCacheEntry) -> None:
         """Adds an already-decoded optimized query cache entry to a model."""
         if not isinstance(model, SqlModel):
             return
